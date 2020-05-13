@@ -1,3 +1,13 @@
-<p>USer Login</p>
-<button (click)="checkLogin()">Check User</button>
-<h3 id="checklogin">{{ checkLoggin }}</h3>
+<div>
+  <p>User Login</p>
+  <button (click)="checkLogin()">Check User</button>
+  <h3 id="checklogin">{{ checkLoggin }}</h3>
+  <div *ngIf="isLoggedIn">
+    <h1>User Logged in</h1>
+    <p id="p2">User is: {{ user.name }}</p>
+  </div>
+  <div *ngIf="!isLoggedIn">
+    <h1>User not Logged in</h1>
+    <p id="p2">Please Log in first</p>
+  </div>
+</div>
