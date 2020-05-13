@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../services/authentication.service';
+import { DataService } from '../services/data.service';
 
 @Component({
   selector: 'app-user',
@@ -9,11 +10,15 @@ import { AuthenticationService } from '../services/authentication.service';
 export class UserComponent implements OnInit {
   public checkLoggin: string;
   public user: { name: string };
+  public data: string;
   public isLoggedIn = false;
 
-  constructor(private readonly authentication: AuthenticationService) {
+  constructor(private readonly authentication: AuthenticationService, private readonly dataService: DataService) {
     this.authentication.authenticate();
     this.user = this.authentication.user;
+    this.dataService.getDetails().then((data: string) => {
+      this.data = data;
+    });
   }
 
   ngOnInit(): void {}

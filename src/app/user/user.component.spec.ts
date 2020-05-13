@@ -1,7 +1,8 @@
-import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, inject, fakeAsync, tick } from '@angular/core/testing';
 
 import { UserComponent } from './user.component';
 import { AuthenticationService } from '../services/authentication.service';
+import { DataService } from './../services/data.service';
 
 describe('UserComponent', () => {
   let component: UserComponent;
@@ -75,10 +76,36 @@ describe('UserComponent', () => {
   });
 
   it('should not see the user name if the user is not logged in', () => {
-    // get a dom element
     fixture.detectChanges();
+    // get a dom element
     let compile = fixture.debugElement.nativeElement;
     expect(compile.querySelector('#p2').textContent).toContain('Please Log in first');
     expect(compile.querySelector('#p2').textContent).not.toContain(component.user.name);
   });
+
+  it('should not fetch data successfully if not called asynchronously', () => {
+    let data = fixture.debugElement.injector.get(DataService);
+    let spy = spyOn(data, 'getDetails').and.returnValue(Promise.resolve(data));
+    fixture.detectChanges();
+    expect(component.data).toBe(undefined);
+  });
+
+  // allow us to run a sync test
+  it('should fetch data successfully if called asynchronously', async(() => {
+    let data = fixture.debugElement.injector.get(DataService);
+    let spy = spyOn(data, 'getDetails').and.returnValue(Promise.resolve('Data'));
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(component.data).toBe('Data');
+    });
+  }));
+
+  // allow us to run a fakeAsync test using  tick
+  xit('should fetch data successfully if called asynchronously', fakeAsync(() => {
+    let data = fixture.debugElement.injector.get(DataService);
+    let spy = spyOn(data, 'getDetails').and.returnValue(Promise.resolve('Data'));
+    fixture.detectChanges();
+    tick();
+    expect(component.data).toBe('Data');
+  }));
 });
